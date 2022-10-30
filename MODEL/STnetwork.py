@@ -29,14 +29,14 @@ class SplitChannelAttention(nn.Module):
             nn.Conv2d(channel // ratio, channel, kernel_size=1, bias=False),
             nn.Sigmoid()
         )
-        self.layer_space = nn.Sequential(
+        self.layer_spatial = nn.Sequential(
             nn.Conv2d(channel // ratio, channel, kernel_size=1, bias=False),
             nn.Sigmoid()
         )
 
     def forward(self, x):
         squeeze = self.layer(x)
-        return x * self.layer_frequency(squeeze), x * self.layer_space(squeeze)
+        return x * self.layer_frequency(squeeze), x * self.layer_spatial(squeeze)
 
 
 class FourierUnit(nn.Module):
