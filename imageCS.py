@@ -84,8 +84,8 @@ def closure():
 
     total_loss += tv_loss(out_imgS)
 
-    out_imgS = out_imgS.view(row, col)
-    out_imgT = out_imgT.view(row, col)
+    out_imgS = out_imgS.view(row, col)   # structure component
+    out_imgT = out_imgT.view(row, col)   # texture component
 
     for num_r in range(1, int(ma.ceil(row / block_size)) + 1):
         for num_c in range(1, int(ma.ceil(col / block_size)) + 1):
@@ -109,10 +109,10 @@ def closure():
     total_loss.backward()
     psnr = compare_psnr(np.asarray(img), torchout_img.detach().cpu().numpy()*255)
     ssim = compare_ssim(np.asarray(img), torchout_img.detach().cpu().numpy()*255)
-    print("the %d iteration %.3f  %.6f" % (i, psnr, ssim), '   ', total_loss.item())
+    print("the %d iteration %.2f  %.4f" % (i, psnr, ssim))
     i += 1
 
-    return total_loss, psnr, ssim
+    return total_loss
 
 
 net_input_saved = net_input.detach().clone()
@@ -125,6 +125,6 @@ optimizer = torch.optim.Adam(p, lr=LR)
 
 for j in range(num_iter):
     optimizer.zero_grad()
-    total_loss, psnr, ssim = closure()
+    total_loss = closure()
     nn.utils.clip_grad_norm_(p, 5)
     optimizer.step()
