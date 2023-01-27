@@ -32,13 +32,11 @@ LR = 0.001
 row = row - np.mod(row, block_size)
 col = col - np.mod(col, block_size)
 img = img[:row, :col]
-
 img_numpy = np.asarray(img).astype(np.float32)/255
 print(img_numpy.shape)
 
 imgsize = block_size * block_size
 size_y = round(int(imgsize)*MR)
-
 data = sio.loadmat('measurement_matrix/Phi_50.mat')
 phi = data['Phi']
 phi = phi[0:size_y, :]
@@ -47,13 +45,11 @@ phi = torch.from_numpy(phi).float().cuda()
 INPUT = 'noise'
 OPT_OVER = 'net'
 reg_noise_std = 0.03
-
 net_input = get_noise(input_depth, INPUT, (row, col)).type(dtype).detach()
 net = network(num_input_channels=input_depth, num_output_channels=1, num_channels_down=128, num_channels_up=128,
               num_channels_skip=4, filter_size=3, need_bias=True, pad='reflection', upsample_mode='bilinear')
 net = net.type(dtype)
 
-# Loss
 l1loss = torch.nn.L1Loss(reduction='sum').type(dtype)
 
 
